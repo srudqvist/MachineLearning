@@ -30,8 +30,13 @@ def example1():
 def example2():
     xs = torch.Tensor(40).uniform_(0,100)
     #ys = torch.Tensor(xs).multiply(2).add(9)
-    ys = torch.Tensor(xs).multiply(2).add(9).normal_(mean=0,std=20.0)
-    #ys = torch.Tensor(xs).add((2*xs)+9).normal_(mean=0,std=20.0)
+    
+    ys = torch.Tensor(xs).multiply(-2).add(-9).normal_(mean=0,std=20.0)
+    #ys = torch.Tensor(xs).multiply(2).add(9).normal_(mean=0,std=20.0)
+    
+    
+    #ys = torch.Tensor(xs).normal_(mean=0,std=20.0).multiply(2).add(9)
+    #ys = torch.Tensor(2 * xs + 9).normal_(mean=0,std=20.0)
     print(xs)
     print(ys)
     plt.scatter(xs.numpy(),ys.numpy())
