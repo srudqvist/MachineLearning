@@ -1,6 +1,7 @@
 from turtle import st
 import torch
 import statistics
+import time
 
 # Question 1
 # Describe the output of the following program in one or two sentences.
@@ -39,12 +40,17 @@ def number_three():
     print(xs)
     print(f"Mean: {xs.mean()}")
 
+'''
+
+'''
+
 
 def number_four():
     list_of_means_100 = []
     list_of_means_1000 = []
     list_of_means_10000 = []
 
+    start_time = time.time()
     for i in range(0,10000):
         xs = torch.Tensor(30).normal_(mean=100, std=25)
         list_of_means_10000.append(float(xs.mean()))
@@ -52,21 +58,17 @@ def number_four():
             list_of_means_100.append(float(xs.mean()))
         if i < 1000:
             list_of_means_1000.append(float(xs.mean()))
+    
+    end_time = time.time()
     #print(list_of_means)
     avg_100 = sum(list_of_means_100)/len(list_of_means_100)
     avg_1000 = sum(list_of_means_1000)/len(list_of_means_1000)
     avg_10000 = sum(list_of_means_10000)/len(list_of_means_10000)
-
-    mean_100 = statistics.mean(list_of_means_100)
-    mean_1000 = statistics.mean(list_of_means_1000)
-    mean_10000 = statistics.mean(list_of_means_10000)
-
+    
+    print(f"Time: {end_time - start_time}")
     print(f"The average mean of 100 runs is: {avg_100}")
     print(f"The average mean of 1000 runs is: {avg_1000}")
     print(f"The average mean of 10000 runs is: {avg_10000}")
-    print(f"The mean of the mean of 100 runs is: {mean_100}")
-    print(f"The mean of the mean of 1000 runs is: {mean_1000}")
-    print(f"The mean of the mean of 10000 runs is: {mean_10000}")
 
 '''
 The more times the program is run, the closer to 100 the mean is
@@ -77,6 +79,8 @@ def number_five():
     list_of_std_1000 = []
     list_of_std_10000 = []
 
+    start_time = time.time()
+
     for i in range(0,10000):
         xs = torch.Tensor(30).normal_(mean=100, std=25)
         list_of_std_10000.append(float(xs.std()))
@@ -85,25 +89,20 @@ def number_five():
         if i < 1000:
             list_of_std_1000.append(float(xs.std()))
 
+    end_time = time.time()
+    
     avg_100 = sum(list_of_std_100)/len(list_of_std_100)
     avg_1000 = sum(list_of_std_1000)/len(list_of_std_1000)
     avg_10000 = sum(list_of_std_10000)/len(list_of_std_10000)
 
-    mean_100 = statistics.mean(list_of_std_100)
-    mean_1000 = statistics.mean(list_of_std_1000)
-    mean_10000 = statistics.mean(list_of_std_10000)
-
+    print(f"Time: {end_time - start_time}")
     print(f"The average std of 100 runs is: {avg_100}")
     print(f"The average std of 1000 runs is: {avg_1000}")
     print(f"The average std of 10000 runs is: {avg_10000}")
 
-    print(f"The mean std of 100 runs is: {mean_100}")
-    print(f"The mean std of 1000 runs is: {mean_1000}")
-    print(f"The mean std of 10000 runs is: {mean_10000}")
-
 
 '''
-The standard deviation does not seem to be effected by times run
+The standard deviation does not seem to be effected by times run?
 '''
 
 # What happens if you sample from the uniform distribution on [0,1] 
@@ -118,6 +117,7 @@ def number_six():
     list_of_means_1000000 = []
 
     # Loop to create data for the lists
+    start_time = time.time()
     for i in range(0,1000000):
         xs = torch.Tensor(30).uniform_(0,1)
         list_of_means_1000000.append(float(xs.mean()))
@@ -127,13 +127,14 @@ def number_six():
             list_of_means_100.append(float(xs.mean()))
         if i < 1000:
             list_of_means_1000.append(float(xs.mean()))
-    
+    end_time = time.time()
     # Get the mean for each
     mean_100 = statistics.mean(list_of_means_100)
     mean_1000 = statistics.mean(list_of_means_1000)
     mean_10000 = statistics.mean(list_of_means_10000)
     mean_1000000 = statistics.mean(list_of_means_1000000)
 
+    print(f"Time: {end_time - start_time}")
     print(f"The mean of the mean of 100 runs is: {mean_100}")
     print(f"The mean of the mean of 1000 runs is: {mean_1000}")
     print(f"The mean of the mean of 10000 runs is: {mean_10000}")
