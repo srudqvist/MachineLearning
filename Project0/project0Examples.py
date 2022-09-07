@@ -135,6 +135,6 @@ def slicing_tensors():
 #print("File one __name__ is set to: {}" .format(__name__))
 if __name__ == "__main__":
     #intro()
-    #dim_squeezing()
+    dim_squeezing()
     #arithmetic_operations()
-    slicing_tensors()
+    #slicing_tensors()

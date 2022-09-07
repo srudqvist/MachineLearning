@@ -26,12 +26,17 @@ def example1():
 # and a second one called ys holding the corresponding outputs. 
 # Select the inputs from the uniform distribution on [0,100) and then, for each such x-value, 
 # get its corresponding y-value by adding to the quantity 2x+9 a perturbation (or error) 
-# randomly selected from the normal distribution with mean 0 and standard deviation 20.0.
+# randomly selected from the normal distribution with mean 0 and standard deviation 20.0. 
 def example2():
     xs = torch.Tensor(40).uniform_(0,100)
     #ys = torch.Tensor(xs).multiply(2).add(9)
-    ys = torch.Tensor(xs).multiply(2).add(9).normal_(mean=0,std=20.0)
-    #ys = torch.Tensor(xs).add((2*xs)+9).normal_(mean=0,std=20.0)
+    
+    ys = torch.Tensor(xs).multiply(-2).add(-9).normal_(mean=0,std=20.0)
+    #ys = torch.Tensor(xs).multiply(2).add(9).normal_(mean=0,std=20.0)
+    
+    
+    #ys = torch.Tensor(xs).normal_(mean=0,std=20.0).multiply(2).add(9)
+    #ys = torch.Tensor(2 * xs + 9).normal_(mean=0,std=20.0)
     print(xs)
     print(ys)
     plt.scatter(xs.numpy(),ys.numpy())
