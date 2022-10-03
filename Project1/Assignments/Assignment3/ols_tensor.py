@@ -27,6 +27,7 @@ Notes:
 """
 import csv
 import torch
+import time
 
 # This code block reads the data from the csv file and, skipping the first line,
 # writes the 2nd, 3rd, and 4th elements of each line to appropriate lists.
@@ -54,8 +55,18 @@ lin_alg_sol = torch.linalg.lstsq(A, yss, driver='gels').solution[:,0]
 # mean center; or comment out all 4 lines; or just the last 2.
 xss_means = xss.mean(0)  # xss_means.size() returns torch.size([2])
 yss_means = yss.mean()   # yss_means.size() returns torch.size([])
-xss_stds  = xss.std(0)   # similarly here
-yss_stds  = yss.std()    # and here
+
+#xss_stds  = xss.std(0)   # similarly here
+#yss_stds  = yss.std()    # and here
+
+# Original ans
+# epoch: 30, current loss: 0.22856834530830383
+# The least-squares regression plane:
+#  found by the neural net is: y = -11338.480 + 1.147*x1 + 8.047*x2
+#  using linear algebra:       y = -11372.168 + 1.147*x1 + 8.047*x2
+# learning rate: 0.5
+
+
 
 # Mean center the inputs and output (if xss_means and yss_means are defined).
 if 'xss_means' in locals() and 'yss_means' in locals():
@@ -72,9 +83,11 @@ xss = torch.cat((torch.ones(len(xss),1), xss), 1)  # torch.Size([32,3])
 # The weights, randomly initialized. Here, w[0] will be the bias.
 w = torch.rand(3,1)-0.5*torch.ones(3,1)  # torch.Size([3,1])
 
-alpha = 0.5  # learning rate
-epochs = 30  # the total number of times the model sees all of the data
+#alpha = 0.5  # learning rate
+alpha = 0.004
+epochs = 20000  # the total number of times the model sees all of the data
 num_examples = len(xss)  # the number of examples
+start_time = time.time()
 
 for epoch in range(epochs):  # the training loop
 
@@ -85,7 +98,23 @@ for epoch in range(epochs):  # the training loop
   # Compute and print the current loss, which is the mean squared error:
   #     sum_{k=1}^32 (yss_pred[k] - yss[k])^2 / 32.
   loss = (yss_pred - yss).pow(2).sum()/num_examples  # torch.Size([])
-  print("epoch: {0}, current loss: {1}".format(epoch+1, loss.item()))
+  if epoch == 0:
+    print("epoch: {0}, current loss: {1}".format(epoch+1, loss.item()))
+
+  if epoch == epochs / 4:
+    print("epoch: {0}, current loss: {1}".format(epoch, loss.item()))
+
+  if epoch == epochs / 2:
+    print("epoch: {0}, current loss: {1}".format(epoch, loss.item()))
+
+  if epoch == epochs / 1.5:
+    print("epoch: {0}, current loss: {1}".format(epoch, loss.item()))
+  
+  if epoch == epochs / 1.25:
+    print("epoch: {0}, current loss: {1}".format(epoch, loss.item()))
+
+  if epoch == epochs -1:
+    print("epoch: {0}, current loss: {1}".format(epoch, loss.item()))
 
   # Compute the gradient of the loss function w/r to the weights which is the
   # vector with jth component (for j=0,1,2) equal to:
@@ -95,6 +124,8 @@ for epoch in range(epochs):  # the training loop
   # update the weights.
   w = w - alpha * grad  # torch.Size([3,1])
 
+end_time = time.time()
+print(f"Time: {(end_time - start_time) / 60} min")
 # Squeeze away a dimension.
 w = w.squeeze(1)  # torch.Size([3])
 
