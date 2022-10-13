@@ -61,8 +61,8 @@ print("The model is:\n", model)
 # Set the criterion to be mean-squared error
 criterion = nn.MSELoss()
 
-learning_rate = 0.2
-epochs = 30
+learning_rate = 0.003
+epochs = 2000
 num_examples = len(xss)
 batch_size = 4
 
