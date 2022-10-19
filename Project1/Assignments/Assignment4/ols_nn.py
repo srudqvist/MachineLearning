@@ -61,19 +61,21 @@ print("The model is:\n", model)
 # Set the criterion to be mean-squared error
 criterion = nn.MSELoss()
 
-learning_rate = 0.003
-epochs = 2000
+learning_rate = 0.032
+epochs = 400
 num_examples = len(xss)
-batch_size = 4
+batch_size = 20
 
 for epoch in range(epochs):  # train the model
     tot_loss = 0
     indices = torch.randperm(32)
-    for index in range(num_examples):
+    for index in range(0, num_examples, batch_size):
         # yss_pred refers to the outputs predicted by the model
-        yss_pred = model(xss[indices[index]] / batch_size) 
+        #yss_pred = model(xss[indices[index]]) 
+        current_indices = indices[index:index+batch_size]
+        yss_pred = model(xss[current_indices])
 
-        loss = criterion(yss_pred, yss[indices[index]] / batch_size) # compute the loss
+        loss = criterion(yss_pred, yss[indices[index:index+batch_size]]) # compute the loss
         tot_loss += loss.item() # Compute the loss
 
         model.zero_grad() # set the gradient to the zero vector
