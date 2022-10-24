@@ -82,10 +82,10 @@ for param in z_parameters:
 criterion = nn.MSELoss()
 
 num_examples = len(data)
-batch_size = 30         # 2264  10  5
+batch_size = 20         # 2264  10  5
 learning_rate = .008    # 0.000355  0.001
 momentum = 0.9          # 0.899
-epochs = 1000           # 1000
+epochs = 2000           # 1000
 
 start_time = time.time()
 # train the model
