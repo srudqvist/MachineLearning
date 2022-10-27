@@ -31,39 +31,18 @@ class MyModel(nn.Module):
 
   def __init__(self):
     super(MyModel, self).__init__()
-    #self.layer1 = nn.Linear(13, 1)
-
-    #self.layer1 = nn.Linear(13, 10)
-    #self.layer2 = nn.Linear(10, 1)
 
     self.layer1 = nn.Linear(13, 10)
     self.layer2 = nn.Linear(10, 8)
     self.layer3 = nn.Linear(8, 1)
 
-    # self.layer1 = nn.Linear(13, 10)
-    # self.layer2 = nn.Linear(10, 8)
-    # self.layer3 = nn.Linear(8, 4)
-    # self.layer4 = nn.Linear(4, 1)
-
   def forward(self, xss):
-    #return self.layer1(xss)
-    # xss = self.layer1(xss)
-    # xss = torch.relu(xss)
-    # return self.layer2(xss)
 
     xss = self.layer1(xss)
     xss = torch.relu(xss)
     xss = self.layer2(xss)
     xss = torch.relu(xss)
     return self.layer3(xss)
-
-    # xss = self.layer1(xss)
-    # xss = torch.relu(xss)
-    # xss = self.layer2(xss)
-    # xss = torch.relu(xss)
-    # xss = self.layer3(xss)
-    # xss = torch.relu(xss)
-    # return self.layer4(xss)
 
 # create and print an instance of the model class
 model = MyModel()
