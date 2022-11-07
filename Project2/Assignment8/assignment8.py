@@ -2,6 +2,7 @@
 # Assignment 7
 # Samuel Rudqvist
 
+import copy
 import torch
 import pandas as pd
 import torch.nn as nn
@@ -19,6 +20,8 @@ data = data[1:] # remove the first list which consists of the labels
 
 # randomize the order of the data
 random.shuffle(data)
+
+# data = data[torch.randperm(len(data))]
 
 data = data.astype(float) # coerce the entries in the numpy array to floats
 data = torch.FloatTensor(data) # convert data to a Torch tensor
@@ -52,8 +55,8 @@ class MyModel(nn.Module):
   def __init__(self):
     super(MyModel, self).__init__()
 
-    self.layer1 = nn.Linear(13, 10)
-    self.layer2 = nn.Linear(10, 8)
+    self.layer1 = nn.Linear(20, 12)
+    self.layer2 = nn.Linear(12, 8)
     self.layer3 = nn.Linear(8, 1)
 
   def forward(self, xss):
@@ -70,38 +73,57 @@ print(model)
 
 criterion = nn.MSELoss()
 
-# num_examples = len(data)
-# batch_size = 20         # 2264  10  5
-# learning_rate = .008    # 0.000355  0.001
-# momentum = 0.9          # 0.899
-# epochs = 2000           # 1000
+epochs = 200
+learning_rate = 0.008
+momentum = 0.9
+batchsize = 20
+
+folds = 10
+bail_after = 30
+no_improvement = 0
+best_valids = 1e15*torch.ones(folds)
 
 start_time = time.time()
-# train the model
-model = dulib.train(
-  model,
-  criterion,
-  train_data = (xss_train, yss_train),
-  valid_data = (xss_test, yss_test),
-  learn_params = {'lr': 0.008, 'mo': 0.9},
-  epochs = 400,
-  bs = 100,
-  graph = 1
-  #batchsize = 20
-)
 
-# get the weights of the trained model
-# params = list(model.parameters())
-# print(params)
-# m = params[0].item(); b = params[1].item()
+while no_improvement < bail_after:
+
+  model, valids = dulib.cross_validate(
+      k = folds,
+      model = model,
+      crit = criterion,
+      train_data = (xss_train[:,1:], yss_train[:,:1]),
+      cent_norm_feats = (True, True),
+      cent_norm_targs = (True, True),
+      epochs = epochs,
+      learn_params = {'lr':learning_rate, 'mo':momentum},
+      bs = batchsize,
+      verb = 10
+  )
+
+  if valids.mean().item() < best_valids.mean().item():
+    best_model = copy.deepcopy(model)
+    best_valids = valids
+    no_improvement = 0
+  else:
+    no_improvement += 1
+
+# train the model
+
+# model = dulib.train(
+#   model,
+#   criterion,
+#   train_data = (xss_train, yss_train),
+#   #test_data = (xss_test, yss_test),
+#   learn_params = {'lr': 0.008, 'mo': 0.9},
+#   epochs = 2000,
+#   graph = True
+#   #batchsize = 20
+# )
+
 
 end_time = time.time()
 tot_time = end_time - start_time
 
-# print("total number of examples:", num_examples, end='')
-# print("; batch size:", batch_size)
-# print("learning rate:", learning_rate)
-# print("momentum:", momentum)
 if tot_time < 60:
   print(f"time: {tot_time}")
 else:
@@ -110,12 +132,3 @@ else:
 print("training data variation:", dulib.explained_var(model, (xss_train, yss_train)))
 print("test data variation:", dulib.explained_var(model, (xss_test, yss_test)))
 print()
-
-# Compute 1-SSE/SST which is the proportion of the variance in the data
-# explained by the regression hyperplane.
-# SS_E = 0.0;  SS_T = 0.0
-# mean = data.mean(0)[0] # mean of the outputs (zero, if data are mean-centered)
-# for datum in data:
-#   SS_E = SS_E + (datum[0] - model(datum[1:]))**2
-#   SS_T = SS_T + (datum[0] - mean)**2
-# print('1-SSE/SST = {:1.4f}'.format(1.0-(SS_E/SS_T).item()))
