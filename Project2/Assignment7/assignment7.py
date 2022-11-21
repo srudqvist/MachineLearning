@@ -85,7 +85,7 @@ model = dulib.train(
   valid_data = (xss_test, yss_test),
   learn_params = {'lr': 0.008, 'mo': 0.9},
   epochs = 400,
-  bs = 100,
+  bs = 20,
   graph = 1
   #batchsize = 20
 )
