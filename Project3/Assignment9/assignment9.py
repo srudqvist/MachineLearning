@@ -39,21 +39,20 @@ for i in range(len(yss)):
 # yss.sub_(yss.mean(0)) # mean-center
 # yss.div_(yss.std(0))  # normalize
 
-dulib.center(xss)
-dulib.normalize(xss)
+xss, xss_centered = dulib.center(xss)
+xss, xss_normalized = dulib.normalize(xss)
 
 
-class SigmoidModel(nn.Module):
+class LinearModel(nn.Module):
 
   def __init__(self):
-    super(SigmoidModel, self).__init__()
+    super(LinearModel, self).__init__()
     self.layer1 = nn.Linear(400, 1)
 
   def forward(self, x):
-    x = self.layer1(x)
-    return torch.sigmoid(x)
+    return self.layer1(x)
 
-model = SigmoidModel() # create an instance of the model class
+model = LinearModel() # create an instance of the model class
 
 criterion = nn.MSELoss() # create an instance of the PyTorch class nn.MSELoss
 
@@ -62,8 +61,8 @@ model = dulib.train(
   model,
   criterion,
   train_data = (xss, yss),
-  learn_params = {'lr': 0.00001, 'mo': 0.99},
-  epochs = 100,
+  learn_params = {'lr': 0.00007, 'mo': 0.899},
+  epochs = 1000,
   bs = 20,
 )
 
