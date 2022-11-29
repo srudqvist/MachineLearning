@@ -3,11 +3,8 @@
 
 
 import torch
-import pandas as pd
 import torch.nn as nn
 import du.lib as dulib
-import time
-import random
 from skimage import io
 
 
@@ -20,28 +17,11 @@ for i in range(0, 1000, 20):
     xss[idx] = torch.Tensor((digits[i:i+20,j:j+20]).flatten())
     idx = idx + 1
 
-# extract just the zeros and eights from xss
-# tempxss = torch.Tensor(1000,400)
-# tempxss[:500] = xss[:500]
-# tempxss[500:] = xss[4000:4500]
-
-# # overwrite the original xss with just zeros and eights
-# xss = tempxss
-
 # generate yss to hold the correct classification for each example
 yss = torch.LongTensor(len(xss))
 for i in range(len(yss)):
   yss[i] = i//500
 
-
-
-# xss.sub_(xss.mean(0)) # mean-center
-# xss.div_(xss.std(0))  # normalize
-# yss.sub_(yss.mean(0)) # mean-center
-# yss.div_(yss.std(0))  # normalize
-
-# xss, xss_centered = dulib.center(xss)
-# xss, xss_normalized = dulib.normalize(xss)
 
 indices = torch.randperm(len(xss))
 xss = xss[indices]; yss = yss[indices] # coherently randomize the data
@@ -65,7 +45,6 @@ class LogSoftMaxModel(nn.Module):
     xss = torch.relu(xss)
     xss = self.layer2(xss)
     return torch.log_softmax(xss, dim=1)
-    # return torch.sigmoid(x)
 
 model = LogSoftMaxModel() # create an instance of the model class
 
@@ -81,19 +60,6 @@ model = dulib.train(
   bs = 20,
   # graph = 1
 )
-
-# zero = torch.min(yss).item()
-# eight = torch.max(yss).item()
-# th = 1e-3  # threshold
-# cutoff = (zero+eight)/2
-
-# count = 0
-# for i in range(len(xss)):
-#   yhat = model(xss[i]).item()
-#   y = yss[i].item()
-#   if (yhat>cutoff and abs(y-eight)<th) or (yhat<cutoff and abs(y-zero)<th):
-#     count += 1
-# print("Percentage correct:",100*count/len(xss))
 
 pct_training = dulib.class_accuracy(model, (xss_train, yss_train), show_cm=False)
 print(f"Percentage correct on training data: {100*pct_training:.2f}")
