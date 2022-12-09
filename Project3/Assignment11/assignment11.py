@@ -47,6 +47,12 @@ class ConvolutionalModel(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
         )
+        # self.meta_layer3 = nn.Sequential(
+        #     nn.Conv2d(in_channels=32, out_channels=64,
+        #               kernel_size=4, stride=1, padding=0),
+        #     nn.ReLU(),
+        #     nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
+        # )
         self.fc_layer1 = nn.Linear(800, 10)
 
         # weights
@@ -61,6 +67,7 @@ class ConvolutionalModel(nn.Module):
         xss = torch.unsqueeze(xss, dim=1)
         xss = self.meta_layer1(xss)
         xss = self.meta_layer2(xss)
+        # xss = self.meta_layer3(xss)
 
         xss = torch.reshape(xss, (-1, 800))
         xss = self.fc_layer1(xss)
@@ -79,8 +86,8 @@ model = dulib.train(
     criterion,
     train_data=(xss_train, yss_train),
     valid_data=(xss_test, yss_test),
-    learn_params={'lr': 0.000003, 'mo': 0.99},  # 0.95
-    epochs=100,
+    learn_params={'lr': 0.0000245, 'mo': 0.95},  # 0.95
+    epochs=50,
     bs=20,
     # graph=1
 )
